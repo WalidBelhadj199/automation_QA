@@ -1,22 +1,25 @@
-# Maven
-# Build your Java project and run tests with Apache Maven.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/java
-
 trigger:
-- master
+- main  # Branche à partir de laquelle le pipeline sera déclenché
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'  # Image de machine virtuelle à utiliser
 
 steps:
+- task: MavenAuthenticate@0
+  displayName: 'Authenticate with Maven'
+
 - task: Maven@3
   inputs:
-    mavenPomFile: 'pom.xml'
-    mavenOptions: '-Xmx3072m'
+    mavenPomFile: 'pom.xml'  # Le fichier pom.xml de votre projet
+    options: '-X'  # Options de compilation Maven
+    goals: 'clean install'  # Nettoyer et installer les dépendances
     javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.11'
+    jdkVersionOption: '11'  # Version de JDK, vous pouvez ajuster cela en fonction de votre version
     jdkArchitectureOption: 'x64'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    goals: 'package'
+  displayName: 'Build with Maven'
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFiles: '**/target/test-*.xml'  # Résultats des tests à publier
+    testRunTitle: 'Publish Maven Test Results'
+  condition: succeededOrFailed()  # Exécute cette tâche même si les tests échouent
