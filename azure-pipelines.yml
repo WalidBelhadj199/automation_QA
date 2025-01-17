@@ -4,7 +4,7 @@ trigger:
       - master  # Ou votre branche spécifique si nécessaire
 
 schedules:
-  - cron: "50 11 * * *"  # Exécution à 22:26 UTC (correspond à 01:26 UTC+3)
+  - cron: "01 12 * * *"  # Exécution à 22:26 UTC (correspond à 01:26 UTC+3)
     displayName: "Test daily at 01:26 UTC+3"
     branches:
       include:
@@ -30,4 +30,4 @@ steps:
     inputs:
       testResultsFormat: 'JUnit'
       testResultsFiles: '/target/surefire-reports/TEST-*.xml'
-      failTaskOnFailedTests: true
+      failTaskOnFailedTests: true
