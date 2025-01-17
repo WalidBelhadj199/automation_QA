@@ -1,25 +1,33 @@
 trigger:
-- main  # Branche à partir de laquelle le pipeline sera déclenché
+  branches:
+    include:
+      - master  # Ou votre branche spécifique si nécessaire
+
+schedules:
+  - cron: "50 11 * * *"  # Exécution à 22:26 UTC (correspond à 01:26 UTC+3)
+    displayName: "Test daily at 01:26 UTC+3"
+    branches:
+      include:
+        - master  # Ou votre branche spécifique
+    always: true  # Toujours exécuter même si aucune modification n'a été apportée
 
 pool:
-  vmImage: 'ubuntu-latest'  # Image de machine virtuelle à utiliser
+  vmImage: 'windows-latest'
 
 steps:
-- task: MavenAuthenticate@0
-  displayName: 'Authenticate with Maven'
+  # 1. Build avec Maven et exécution des tests
+  - task: Maven@4
+    inputs:
+      mavenPomFile: 'pom.xml'
+      mavenOptions: '-Xmx3072m'
+      javaHomeOption: 'JDKVersion'
+      jdkVersionOption: '21.0'
+      jdkArchitectureOption: 'x64'
+      goals: 'clean package'
 
-- task: Maven@3
-  inputs:
-    mavenPomFile: 'pom.xml'  # Le fichier pom.xml de votre projet
-    options: '-X'  # Options de compilation Maven
-    goals: 'clean install'  # Nettoyer et installer les dépendances
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '11'  # Version de JDK, vous pouvez ajuster cela en fonction de votre version
-    jdkArchitectureOption: 'x64'
-  displayName: 'Build with Maven'
-
-- task: PublishTestResults@2
-  inputs:
-    testResultsFiles: '**/target/test-*.xml'  # Résultats des tests à publier
-    testRunTitle: 'Publish Maven Test Results'
-  condition: succeededOrFailed()  # Exécute cette tâche même si les tests échouent
+  # 2. Publier les résultats de tests JUnit
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: '/target/surefire-reports/TEST-*.xml'
+      failTaskOnFailedTests: true
