@@ -1,0 +1,82 @@
+package com.tests.automationQA.factory;
+
+import com.tests.automationQA.utils.ConfigFileReader;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+
+import java.util.logging.Logger;
+
+public class ChromeDriverManager implements DriverManager {
+
+    private static final Logger LOGGER = Logger.getLogger(ChromeDriverManager.class.getName());
+    private final ConfigFileReader configFileReader;
+
+    public ChromeDriverManager() {
+        this.configFileReader = new ConfigFileReader();
+    }
+
+    @Override
+    public WebDriver createDriver() {
+        try {
+            ChromeOptions chromeOptions = new ChromeOptions();
+            chromeOptions.addArguments("--start-maximized");
+            configureProxy(chromeOptions);
+            LOGGER.info("ChromeDriver initialized with options: " + chromeOptions.toString());
+            return new ChromeDriver(chromeOptions);
+        } catch (Exception e) {
+            LOGGER.info("Failed to create ChromeDriver: " + e.getMessage());
+            throw new RuntimeException("Error initializing ChromeDriver", e);
+        }
+    }
+
+    /**
+     * Configures proxy settings for ChromeOptions.
+     *
+     * @param chromeOptions ChromeOptions to configure.
+     */
+//    private void configureProxy(ChromeOptions chromeOptions) {
+//        String proxyUrl = configFileReader.getProperty("url.proxy");
+//        String proxyPort = configFileReader.getProperty("port.proxy");
+//
+//        if (proxyUrl == null || proxyPort == null) {
+//            LOGGER.warning("Proxy configuration is missing or incomplete. Proceeding without proxy.");
+//            return;
+//        }
+//
+//        try {
+//            String httpProxy = proxyUrl + ":" + proxyPort;
+//            String sslProxy = proxyUrl + ":" + proxyPort;
+//
+//            Proxy proxy = ProxyUtils.getHttpAndSslProxy(httpProxy, sslProxy);
+//            chromeOptions.setCapability("proxy", proxy);
+//            LOGGER.info("Proxy configured: HTTP = " + httpProxy + ", SSL = " + sslProxy);
+//        } catch (IllegalArgumentException e) {
+//            LOGGER.severe("Invalid proxy configuration: " + e.getMessage());
+//            throw e;
+//        }
+//    }
+
+    private void configureProxy(ChromeOptions chromeOptions) {
+        String proxyUrl = configFileReader.getProperty("url.proxy");
+        String proxyPort = configFileReader.getProperty("port.proxy");
+
+        if (proxyUrl == null || proxyPort == null) {
+            LOGGER.warning("Proxy configuration is missing or incomplete. Proceeding without proxy.");
+            return;
+        }
+
+        try {
+            // Désactiver le proxy pour tester
+            chromeOptions.addArguments("--no-proxy-server");
+            LOGGER.info("Proxy configuration bypassed for testing.");
+        } catch (Exception e) {
+            LOGGER.severe("Error disabling proxy: " + e.getMessage());
+        }
+    }
+
+
+
+
+}
+
