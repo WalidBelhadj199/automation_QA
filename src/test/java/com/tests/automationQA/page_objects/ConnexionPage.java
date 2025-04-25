@@ -16,7 +16,7 @@ public class ConnexionPage extends BasePage {
 	@FindBy(how = How.XPATH, using = "//input[@data-qa='login-email']")
 	private static WebElement champsEmail;
 	@FindBy(how = How.XPATH, using = "//input[@placeholder='Password']")
-	private static WebElement champsPassword;
+ 	private static WebElement champsPassword;
 	@FindBy(how = How.XPATH, using = "//button[normalize-space()='Login']")
 	private static WebElement btnLogin;
 	@FindBy(how = How.XPATH, using = "//li[10]//a[1]")
@@ -60,7 +60,11 @@ public class ConnexionPage extends BasePage {
 	}
 
 
-
+	public static String getVerifPageAcceuil1() {
+		waitForElementToBeClickable(verifPageAcceuil);
+		String msg = verifPageAcceuil.getText();
+		return msg;
+	}
 	
 	
 	

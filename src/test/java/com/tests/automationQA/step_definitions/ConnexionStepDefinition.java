@@ -29,6 +29,7 @@ public class ConnexionStepDefinition {
 	}
 	@Given("que je lance le navigateur")
 	public void queJeLanceLeNavigateur() {
+
 		seleniumUtils.get(configFileReader.getProperty("home.G"));
 	}
 	@Given("je navigue vers {string}")
@@ -65,10 +66,10 @@ public class ConnexionStepDefinition {
 		seleniumUtils.click(ConnexionPage.getBtnLogin());
 	}
 	@Then("l'option {string} doit etr visible")
-	public void lOptionDoitEtrVisible(String string) {
+	public void lOptionDoitEtrVisible(String str) {
 
-		Assert.assertTrue( ConnexionPage.getVerifPageAcceuil().isDisplayed());
 
+		Assert.assertEquals(str,ConnexionPage.getVerifPageAcceuil1());
 	}
 
 
